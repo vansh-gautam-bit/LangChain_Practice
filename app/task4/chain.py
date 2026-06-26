@@ -9,6 +9,11 @@ from app.task4.prompts import (
     linkedin_prompt,
 )
 
+from langchain_core.runnables import(
+    RunnableParallel,
+    RunnablePassthrough,
+)
+
 summary_chain = (
     summary_prompt
     | llm2
@@ -27,8 +32,11 @@ linked_chain = (
     | StrOutputParser()
 )
 
-content_chain = RunnableParallel(
+content_chain = (
+    RunnablePassthrough()
+    | RunnableParallel(
     summary=summary_chain,
     tweet=tweet_chain,
     linkedin_post=linked_chain,
+    )
 )
