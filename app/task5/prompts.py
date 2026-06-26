@@ -4,7 +4,18 @@ extract_prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "Extract the requested information from the user text and return it in JSON format."
+            """"
+
+            Extract the requested information.
+
+            Return ONLY valid JSON
+
+            Fields:
+
+            -name
+            -age
+            -occuopation
+            """
         ),
         (
             "human",
@@ -18,18 +29,25 @@ repair_prompt = ChatPromptTemplate.from_messages(
         (
             "system",
             """
-            The previous JSON could not be parsed
-            Fix the JSON using the parser error.
+
+            Your previous JSON could not be parsed
+
+            Fix ONLY the JSON.
+
             Return ONLY valid JSON.
+
+            Do not explain anything.
             """
         ),
         (
             "human"
             """
             Original Output:
+
             {output}
 
             ParserError:
+            
             {error}
             """
         ),

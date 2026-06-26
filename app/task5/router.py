@@ -14,15 +14,16 @@ def safe_json(request: SafeJsonRequest):
     try:
         result = safe_json_chain.invoke(
             {
-                "text": request.text
+                "text": request.text,
             }
         )
 
         return SafeJsonResponse(
-            data=result
+            data=result,
         )
     
     except Exception as e:
+        
         raise HTTPException(
             status_code=422,
             detail=str(e),

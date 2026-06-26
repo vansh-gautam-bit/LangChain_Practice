@@ -1,4 +1,4 @@
-from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.runnables import RunnableLambda
 
 from app.core.llm import llm
@@ -10,30 +10,41 @@ from app.task5.prompts import (
 
 from app.task5.schemas import UserInfo
 
-parser = JsonOutputParser(pydantic_object=UserInfo)
+parser = PydanticOutputParser(pydantic_object=UserInfo)
 
 extract_chain = (
     extract_prompt
     | llm
 )
 
-def safe_parse(x):
+def safe_parse(ai_message):
+    raw_output = ai_message.content
 
     try:
 
-        return parser.invoke(x)
+        return parser.parse(raw_output)
+    
     except Exception as e:
-        repaired =(
+
+        repair_chain =(
             repair_prompt
             | llm
-        ).invoke(
+        )
+
+        fixed_output = repair_chain.invoke(
             {
-                "output": x.content,
+                "output": raw_output,
                 "error": str(e),
             }
         )
 
-        return parser.invoke(repaired)
+        try:
+            return parser.parse(fixed_output.content)
+        
+        except Exception:
+            raise ValueError(
+                "Unable to generate valid JSON after retry."
+            )
     
 safe_json_chain = (
     extract_chain
