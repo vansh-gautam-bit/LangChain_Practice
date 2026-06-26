@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+langchain
+langchain-core
+langchain-google-genai
+langchain-openrouter
+pydantic
+pydantic-settings
+python-dotenv
