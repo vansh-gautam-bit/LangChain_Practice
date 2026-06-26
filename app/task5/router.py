@@ -24,6 +24,6 @@ def safe_json(request: SafeJsonRequest):
     
     except Exception as e:
         raise HTTPException(
-            stauts_code=42,
+            status_code=422,
             detail=str(e),
         )
